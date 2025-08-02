@@ -1,1 +1,121 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Readora | Library Management System</title>
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+  <style>
+    html, body {
+        height: 100%;
+        margin: 0;
+        font-family: Arial, sans-serif;
+        display: flex;
+        flex-direction: column;
+    }
+
+    header {
+        background-color: #2825ce;
+        color: white;
+        padding: 20px 40px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+    }
+
+    .brand {
+        display: flex;
+        align-items: center;
+    }
+
+    .brand img {
+        height: 50px;
+        margin-right: 15px;
+    }
+
+    nav.nav-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+        gap: 20px;
+        max-width: 900px;
+        margin: 40px auto;
+        justify-items: center;
+    }
+
+    nav.nav-grid form {
+        width: 100%;
+    }
+
+    nav.nav-grid button {
+        width: 100%;
+        padding: 15px 30px;
+        background-color: #2125dd;
+        color: white;
+        border: none;
+        cursor: pointer;
+        border-radius: 10px;
+        font-size: 16px;
+        transition: background-color 0.3s ease, transform 0.2s ease;
+    }
+
+    nav.nav-grid button:hover {
+        background-color: #0312db;
+        transform: scale(1.05);
+    }
+
+    section {
+        margin: 20px;
+        padding: 20px;
+        background-color: #f4f4f4;
+        border-radius: 10px;
+        text-align: center;
+        flex: 1;
+    }
+
+    footer {
+        background-color: #2825ce;
+        color: white;
+        text-align: center;
+        padding: 15px;
+        font-size: 14px;
+    }
+</style>
+
+
+    </style>
+</head>
+
+<body>
+    <header>
+        <div class="brand">
+            <img src="{% static 'images/readora-logo.png' %}" alt="Readora Logo">
+            <h1>Readora</h1>
+        </div>
+    </header>
+
+    <nav>
+        <nav class="nav-grid">
+    <form action="{% url 'login' %}"><button type="submit">Login</button></form>
+    <form action="{% url 'register' %}"><button type="submit">Register</button></form>
+    <form action="{% url 'dashboard' %}"><button type="submit">Admin Dashboard</button></form>
+    <form action="{% url 'search_books' %}"><button type="submit">Search Books</button></form>
+    <form action="{% url 'issue_books' %}"><button type="submit">Issue/Return Books</button></form>
+    <form action="{% url 'reminders' %}"><button type="submit">Reminders</button></form>
+</nav>
+
+    </nav>
+
+    <section>
+        <h2>Welcome to the Readora Library System</h2>
+        <p>Select a section from the menu above to proceed.</p>
+    </section>
+
+    <footer>
+    <p>&copy; 2025 Readora Library System. All rights reserved.</p>
+</footer>
+
+</body>
+</html>
 
