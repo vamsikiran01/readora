@@ -1,0 +1,96 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Register - Library Management System</title>
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    <script src="{% static 'js/script.js' %}"></script>
+</head>
+<body>
+    <header>
+        <h1>Library Management System</h1>
+    </header>
+    <main>
+        <section class="form-container">
+           {% if error %}
+                <p style="color: red;">{{ error }}</p>
+            {% endif %}
+            <form id="registerForm" method="POST" action="{% url 'register' %}" onsubmit="return validateRegistration()">
+                {% csrf_token %}
+                
+                <label for="fullName">Full Name</label>
+                <input type="text" id="fullName" name="fullName" required>
+
+                <label for="email">Email</label>
+                <input type="email" id="email" name="email" required>
+
+                <label for="password">Password</label>
+                <input type="password" id="password" name="password" required>
+
+                <label for="confirmPassword">Confirm Password</label>
+                <input type="password" id="confirmPassword" name="confirmPassword" required>
+
+                <label for="userType">Register As</label>
+                <select id="userType" name="userType" onchange="toggleFields()">
+                    <option value="student">Student</option>
+                    <option value="faculty">Faculty</option>
+                </select>
+
+                <label for="department">Department</label>
+                <select id="department" name="department" required>
+                    <option value="computerScience">Computer Science</option>
+                    <option value="electronics">Electronics</option>
+                    <option value="mechanical">Mechanical</option>
+                    <option value="civil">Civil</option>
+                    <option value="electrical">Electrical</option>
+                </select>
+
+                <label for="year" id="yearLabel" style="display:none;">Year</label>
+                <select id="year" name="year" style="display:none;">
+                    <option value="firstYear">1st Year</option>
+                    <option value="secondYear">2nd Year</option>
+                    <option value="thirdYear">3rd Year</option>
+                    <option value="fourthYear">4th Year</option>
+                </select>
+
+                <label for="registerNumber">Register Number</label>
+                <input type="text" id="registerNumber" name="registerNumber" required>
+
+                <button type="submit">Register</button>
+            </form>
+        </section>
+    </main>
+
+    <script>
+        function toggleFields() {
+            const userType = document.getElementById('userType').value;
+            const yearField = document.getElementById('year');
+            const yearLabel = document.getElementById('yearLabel');
+
+            if (userType === 'student') {
+                yearField.style.display = 'block';
+                yearLabel.style.display = 'block';
+            } else {
+                yearField.style.display = 'none';
+                yearLabel.style.display = 'none';
+            }
+        }
+
+        window.onload = function () {
+            toggleFields();
+        };
+
+        function validateRegistration() {
+            const password = document.getElementById('password').value;
+            const confirmPassword = document.getElementById('confirmPassword').value;
+            if (password !== confirmPassword) {
+                alert("Passwords do not match!");
+                return false;
+            }
+            return true;
+        }
+    </script>
+</body>
+</html>

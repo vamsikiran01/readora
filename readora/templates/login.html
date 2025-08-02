@@ -1,0 +1,149 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Library Management System - Login</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        .login-container {
+            background-color: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            width: 400px;
+            text-align: center;
+        }
+
+        h2 {
+            margin-bottom: 20px;
+        }
+
+        .user-type {
+            display: flex;
+            justify-content: space-around;
+            margin-bottom: 20px;
+        }
+
+        .user-option {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .user-icon {
+            width: 60px;
+            height: 60px;
+            margin-bottom: 5px;
+        }
+
+        .user-type label {
+            margin-top: 5px;
+        }
+
+        .input-field {
+            margin: 15px 0;
+            text-align: left;
+        }
+
+        .input-field input {
+            width: 100%;
+            padding: 10px;
+            font-size: 14px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            margin-top: 5px;
+        }
+
+        button {
+            width: 100%;
+            padding: 10px;
+            font-size: 16px;
+            background-color: #0a50b9;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #0714be;
+        }
+
+        .links {
+            margin-top: 15px;
+        }
+
+        .links a {
+            font-size: 14px;
+            color: #007BFF;
+            text-decoration: none;
+        }
+
+        .links a:hover {
+            text-decoration: underline;
+        }
+
+        .error {
+            color: red;
+            margin-bottom: 15px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="login-container">
+    <h2>Library Management System</h2>
+
+    {% if error %}
+        <p class="error">{{ error }}</p>
+    {% endif %}
+
+    <form method="POST" action="{% url 'login' %}" id="loginForm">
+        {% csrf_token %}
+
+        <div class="user-type">
+            <div class="user-option">
+                <img src="{% static 'images/faculty.jpg' %}" alt="Faculty" class="user-icon">
+                <label><input type="radio" name="userType" value="faculty"> Faculty</label>
+            </div>
+
+            <div class="user-option">
+                <img src="{% static 'images/student.jpg' %}" alt="Student" class="user-icon">
+                <label><input type="radio" name="userType" value="student" checked> Student</label>
+            </div>
+        </div>
+
+        <div class="input-field">
+            <label for="username">Username:</label>
+            <input type="text" id="username" name="username" required>
+        </div>
+
+        <div class="input-field">
+            <label for="password">Password:</label>
+            <input type="password" id="password" name="password" required>
+        </div>
+
+        <button type="submit" id="loginButton">Login</button>
+    </form>
+
+    <div class="links">
+        <a href="{% url 'forgot_password' %}">Forgot your password?</a><br>
+        <a href="{% url 'register' %}">New user? Register here</a>
+    </div>
+</div>
+
+</body>
+</html>

@@ -1,0 +1,137 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Issue/Return Books - Library Management</title>
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    <script src="{% static 'js/script.js' %}"></script>
+    <style>
+        #submissionMessage {
+            display: none;
+            margin-top: 15px;
+            padding: 10px 20px;
+            background-color: #4caf50;
+            color: white;
+            border-radius: 5px;
+            text-align: center;
+            font-weight: bold;
+        }
+
+        .issue-return {
+            max-width: 600px;
+            margin: 30px auto;
+            background-color: #fff;
+            padding: 25px;
+            border-radius: 10px;
+            box-shadow: 0 0 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .issue-return label {
+            display: block;
+            margin-top: 15px;
+            font-weight: bold;
+        }
+
+        .issue-return input,
+        .issue-return select,
+        .issue-return button {
+            width: 100%;
+            padding: 10px;
+            margin-top: 5px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+            box-sizing: border-box;
+        }
+
+        .issue-return button {
+            background-color: #194fe2;
+            color: white;
+            border: none;
+            margin-top: 20px;
+            cursor: pointer;
+        }
+
+        .issue-return button:hover {
+            background-color: #0313f7;
+        }
+
+        header {
+            background-color: #2825ce;
+            color: white;
+            padding: 20px;
+            text-align: center;
+        }
+
+        body {
+            background-color: #f4f4f4;
+            font-family: Arial, sans-serif;
+            margin: 0;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Library Management System</h1>
+    </header>
+
+    <main>
+        <section class="issue-return">
+            <h2>Issue or Return Book</h2>
+            <form id="issueReturnForm" onsubmit="return issueReturnBook()">
+                <label for="bookName">Book Name</label>
+                <input type="text" id="bookName" required>
+
+                <label for="department">Department</label>
+                <select id="department" required>
+                    <option value="">-- Select Department --</option>
+                    <option value="CSE">CSE</option>
+                    <option value="CSM">CSM</option>
+                    <option value="CSD">CSD</option>
+                    <option value="ECE">ECE</option>
+                    <option value="EEE">EEE</option>
+                    <option value="MECH">MECH</option>
+                    <option value="CIVIL">CIVIL</option>
+                    <option value="MBA">MBA</option>
+                </select>
+
+                <label for="action">Action</label>
+                <select id="action">
+                    <option value="issue">Issue</option>
+                    <option value="return">Return</option>
+                </select>
+
+                <button type="submit">Submit</button>
+            </form>
+
+            <div id="submissionMessage">Request submitted to the admin ✅</div>
+        </section>
+    </main>
+
+    <script>
+        function issueReturnBook() {
+            const bookName = document.getElementById('bookName').value.trim();
+            const department = document.getElementById('department').value;
+            const action = document.getElementById('action').value;
+            const messageBox = document.getElementById('submissionMessage');
+
+            if (!bookName || !department) {
+                alert("Please fill in both Book Name and Department.");
+                return false;
+            }
+
+            messageBox.textContent = `Request to ${action} "${bookName}" (${department}) submitted to the admin ✅`;
+            messageBox.style.display = 'block';
+
+            setTimeout(() => {
+                messageBox.style.display = 'none';
+            }, 3000);
+
+            document.getElementById('issueReturnForm').reset();
+            return false;
+        }
+    </script>
+</body>
+</html>

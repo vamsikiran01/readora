@@ -1,0 +1,182 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Search Books - Library Management</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+        }
+
+        header {
+            background-color: #333;
+            color: white;
+            padding: 1rem;
+            text-align: center;
+        }
+
+        main {
+            padding: 2rem;
+        }
+
+        .search-container {
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 1rem;
+            background-color: white;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        input, select, button {
+            width: 100%;
+            padding: 0.8rem;
+            margin: 0.5rem 0;
+            box-sizing: border-box;
+        }
+
+        button {
+            background-color: #194fe2;
+            color: white;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #0313f7;
+        }
+
+        #bookList {
+            list-style-type: none;
+            padding: 0;
+        }
+
+        #bookList li {
+            background-color: #f9f9f9;
+            margin: 0.5rem 0;
+            padding: 1rem;
+            border-radius: 4px;
+            border: 1px solid #ddd;
+        }
+
+        #bookList li a {
+            text-decoration: none;
+            color: #333;
+        }
+
+        #bookList li a:hover {
+            text-decoration: underline;
+            color: #194fe2;
+        }
+
+        #resultMessage {
+            font-weight: bold;
+            margin-top: 1rem;
+        }
+    </style>
+</head>
+<body>
+
+<header>
+    <h1>Library Management System</h1>
+</header>
+
+<main>
+    <section class="search-container">
+        <h2>Search Books</h2>
+
+        <label for="bookTypeFilter">Filter by Book Type:</label>
+        <select id="bookTypeFilter">
+            <option value="All">All</option>
+            <option value="CSE">CSE</option>
+            <option value="CSM">CSM</option>
+            <option value="CSD">CSD</option>
+            <option value="ECE">ECE</option>
+            <option value="EEE">EEE</option>
+            <option value="MECH">MECH</option>
+            <option value="CIVIL">CIVIL</option>
+            <option value="MBA">MBA</option>
+        </select>
+
+        <input type="text" id="searchQuery" placeholder="Search by Title or Author">
+
+        <button onclick="searchBooks()">Search</button>
+
+        <p id="resultMessage"></p>
+
+        <ul id="bookList"></ul>
+    </section>
+</main>
+
+<script>
+    const books = [
+        { title: 'Introduction to CSE', author: 'John Doe', type: 'CSE', file: 'books/introduction_to_cse.pdf' },
+        { title: 'Data Structures and Algorithms', author: 'Jane Smith', type: 'CSE', file: 'books/data_structures_and_algorithms.pdf' },
+        { title: 'Operating Systems Concepts', author: 'Alice Brown', type: 'CSE', file: 'books/operating_systems_concepts.pdf' },
+
+        { title: 'Artificial intelligence', author: 'Michael Johnson', type: 'CSM', file: 'books/artificial_intelligence.pdf' },
+        { title: 'Machine learning', author: 'Robert White', type: 'CSM', file: 'books/machine_learning.pdf' },
+        { title: 'Deep learning and Big Data', author: 'Emily Davis', type: 'CSM', file: 'books/deep_learning_and_big_data.pdf' },
+
+        { title: 'Data Science', author: 'David Clark', type: 'CSD', file: 'books/data_science.pdf' },
+        { title: 'Digital Signal Processing', author: 'Sarah Lee', type: 'CSD', file: 'books/digital_signal_processing.pdf' },
+        { title: 'Untitled', author: 'Chris Adams', type: 'CSD', file: 'books/csd_book_3.pdf' },
+
+        { title: 'Basic Electronics', author: 'Jane Smith', type: 'ECE', file: 'books/basic_electronics.pdf' },
+        { title: 'Signal Processing for ECE', author: 'Mark Johnson', type: 'ECE', file: 'books/signal_processing_for_ece.pdf' },
+        { title: 'Microprocessors and Microcontrollers', author: 'Alice Brown', type: 'ECE', file: 'books/microprocessors_and_microcontrollers.pdf' },
+
+        { title: 'Electrical Machines', author: 'Michael Green', type: 'EEE', file: 'books/electrical_machines.pdf' },
+        { title: 'Power Systems Engineering', author: 'Robert White', type: 'EEE', file: 'books/power_systems_engineering.pdf' },
+        { title: 'Electromagnetic Fields', author: 'David Clark', type: 'EEE', file: 'books/electromagnetic_fields.pdf' },
+
+        { title: 'Thermodynamics', author: 'John Doe', type: 'MECH', file: 'books/thermodynamics.pdf' },
+        { title: 'Fluid Mechanics', author: 'Chris Adams', type: 'MECH', file: 'books/fluid_mechanics.pdf' },
+        { title: 'Machine Design', author: 'Emily Davis', type: 'MECH', file: 'books/machine_design.pdf' },
+
+        { title: 'Strength of Materials', author: 'Alice Brown', type: 'CIVIL', file: 'books/strength_of_materials.pdf' },
+        { title: 'Concrete Technology', author: 'Michael Johnson', type: 'CIVIL', file: 'books/concrete_technology.pdf' },
+        { title: 'Structural Analysis', author: 'Sarah Lee', type: 'CIVIL', file: 'books/structural_analysis.pdf' },
+
+        { title: 'Business Management', author: 'David Clark', type: 'MBA', file: 'books/business_management.pdf' },
+        { title: 'Marketing Strategies', author: 'Robert White', type: 'MBA', file: 'books/marketing_strategies.pdf' },
+        { title: 'Financial Accounting for Managers', author: 'Chris Adams', type: 'MBA', file: 'books/financial_accounting_for_managers.pdf' }
+    ];
+
+    function searchBooks() {
+        const searchQuery = document.getElementById('searchQuery').value.toLowerCase();
+        const bookTypeFilter = document.getElementById('bookTypeFilter').value;
+        const resultMessage = document.getElementById('resultMessage');
+        const bookList = document.getElementById('bookList');
+
+        bookList.innerHTML = '';
+        resultMessage.textContent = '';
+
+        const filteredBooks = books.filter(book => {
+            const matchesType = bookTypeFilter === 'All' || book.type === bookTypeFilter;
+            const matchesQuery = book.title.toLowerCase().includes(searchQuery) || book.author.toLowerCase().includes(searchQuery);
+            return matchesType && matchesQuery;
+        });
+
+        if (filteredBooks.length > 0) {
+            filteredBooks.forEach(book => {
+                const listItem = document.createElement('li');
+                const link = document.createElement('a');
+                link.href = "{% static '' %}" + book.file;
+                link.target = "_blank";
+                link.textContent = `${book.title} by ${book.author} (Type: ${book.type})`;
+                listItem.appendChild(link);
+                bookList.appendChild(listItem);
+            });
+            resultMessage.textContent = 'Books found!';
+        } else {
+            resultMessage.textContent = 'No books found matching your search.';
+        }
+    }
+</script>
+
+</body>
+</html>

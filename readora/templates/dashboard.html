@@ -1,0 +1,111 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard - Library Management</title>
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    <script src="{% static 'js/script.js' %}"></script>
+    <style>
+        #notification {
+            display: none;
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: #4caf50;
+            color: white;
+            padding: 12px 24px;
+            border-radius: 5px;
+            font-size: 15px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+            z-index: 1000;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Admin Dashboard</h1>
+    </header>
+
+    <main>
+        <section class="dashboard">
+            <h2>Add New Book</h2>
+            <form id="addBookForm" onsubmit="return addBook()">
+                <label for="bookTitle">Book Title</label>
+                <input type="text" id="bookTitle" required>
+
+                <label for="author">Author</label>
+                <input type="text" id="author" required>
+
+                <label for="isbn">ISBN</label>
+                <input type="text" id="isbn" required>
+
+                <label for="bookType">Book Type</label>
+                <select id="bookType" required>
+                    <option value="CSE">CSE</option>
+                    <option value="Non-fiction">CSM</option>
+                    <option value="Science">CSD</option>
+                    <option value="History">ECE</option>
+                    <option value="Biography">EEE</option>
+                    <option value="Fantasy">MECH</option>
+                    <option value="Others">CIVIL</option>
+                    <option value="Others">MBA</option>
+                    <option value="Others">OTHERS</option>
+                </select>
+
+                <label for="availability">Availability</label>
+                <select id="availability">
+                    <option value="available">Available</option>
+                    <option value="borrowed">Borrowed</option>
+                </select>
+
+                <label for="renewalStatus">Renewal Status</label>
+                <select id="renewalStatus" required>
+                    <option value="notRenewed">Not Renewed</option>
+                    <option value="renewed">Renewed</option>
+                </select>
+
+                <label for="renewalDate">Renewal Date (if applicable)</label>
+                <input type="date" id="renewalDate" name="renewalDate">
+
+                <button type="submit">Add Book</button>
+            </form>
+        </section>
+    </main>
+
+    <!-- ✅ Notification message -->
+    <div id="notification">Book added successfully!</div>
+
+    <!-- ✅ Script to show notification -->
+    <script>
+        function showNotification(message) {
+            const note = document.getElementById('notification');
+            note.textContent = message;
+            note.style.display = 'block';
+            setTimeout(() => {
+                note.style.display = 'none';
+            }, 3000);
+        }
+
+        function addBook() {
+            const bookTitle = document.getElementById('bookTitle').value;
+            const author = document.getElementById('author').value;
+            const isbn = document.getElementById('isbn').value;
+            const bookType = document.getElementById('bookType').value;
+            const availability = document.getElementById('availability').value;
+            const renewalStatus = document.getElementById('renewalStatus').value;
+            const renewalDate = document.getElementById('renewalDate').value;
+
+            // Optional: Store book in memory or DB (not shown here)
+
+            showNotification(`✅ Book "${bookTitle}" by ${author} added!`);
+
+            // Reset form
+            document.getElementById('addBookForm').reset();
+            return false; // prevent page reload
+        }
+    </script>
+</body>
+</html>
