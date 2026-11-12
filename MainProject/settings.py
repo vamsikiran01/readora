@@ -4,6 +4,7 @@ Django settings for MainProject project.
 
 from pathlib import Path
 import os
+import shutil
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -67,8 +68,10 @@ TEMPLATES = [
 WSGI_APPLICATION = 'MainProject.wsgi.application'
 
 # Database
-# Support PostgreSQL in production (e.g. Neon, Supabase) via DATABASE_URL, fallback to SQLite locally
+# Support PostgreSQL in production (e.g. Neon, Supabase) via DATABASE_URL
 DATABASE_URL = os.environ.get('DATABASE_URL')
+IS_VERCEL = os.environ.get('VERCEL') == '1' or 'VERCEL' in os.environ
+
 if DATABASE_URL:
     try:
         import dj_database_url
@@ -82,6 +85,28 @@ if DATABASE_URL:
                 'NAME': BASE_DIR / 'db.sqlite3',
             }
         }
+elif IS_VERCEL:
+    # On Vercel serverless, the repository filesystem is read-only.
+    # The only writable directory is /tmp.
+    # Copy the pre-seeded db.sqlite3 to /tmp if not already there, so writes succeed!
+    tmp_db_path = Path('/tmp') / 'db.sqlite3'
+    orig_db_path = BASE_DIR / 'db.sqlite3'
+    if not tmp_db_path.exists() and orig_db_path.exists():
+        try:
+            shutil.copyfile(orig_db_path, tmp_db_path)
+            try:
+                os.chmod(tmp_db_path, 0o666)
+            except Exception:
+                pass
+        except Exception:
+            pass
+
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.sqlite3',
+            'NAME': str(tmp_db_path),
+        }
+    }
 else:
     DATABASES = {
         'default': {
