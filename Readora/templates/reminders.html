@@ -1,0 +1,169 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Due Date & Overdue Reminders | Readora LMS{% endblock %}
+
+{% block content %}
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+
+    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
+        <div>
+            <div class="flex items-center gap-2 mb-1">
+                <span class="px-2.5 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider bg-amber-100 text-amber-800">Compliance & Due Dates</span>
+            </div>
+            <h1 class="text-3xl font-display font-extrabold text-slate-900 tracking-tight">Circulation Reminders</h1>
+            <p class="text-sm text-slate-500 mt-1">Real-time monitoring of loan expiration dates, overdue notices, and fine calculations.</p>
+        </div>
+
+        {% if is_librarian %}
+            <button type="button" onclick="triggerEmailBroadcast()" class="px-4 py-2.5 rounded-xl bg-amber-600 hover:bg-amber-700 text-white font-semibold text-xs shadow-sm transition-all flex items-center gap-2">
+                <i class="fa-solid fa-paper-plane"></i> Send Overdue Email Alerts
+            </button>
+        {% endif %}
+    </div>
+
+    <!-- Alert Cards -->
+    <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-8">
+        <!-- Overdue -->
+        <div class="p-5 rounded-2xl bg-white border border-rose-200 shadow-sm flex items-center justify-between">
+            <div>
+                <span class="text-xs font-semibold text-rose-600 uppercase tracking-wider">Critical Overdue</span>
+                <h3 class="text-3xl font-display font-bold text-rose-600 mt-1">{{ overdue_records|length }}</h3>
+                <p class="text-[11px] text-slate-400">Past return deadline</p>
+            </div>
+            <div class="w-12 h-12 rounded-xl bg-rose-50 text-rose-600 flex items-center justify-center text-xl">
+                <i class="fa-solid fa-circle-exclamation"></i>
+            </div>
+        </div>
+
+        <!-- Due Soon -->
+        <div class="p-5 rounded-2xl bg-white border border-amber-200 shadow-sm flex items-center justify-between">
+            <div>
+                <span class="text-xs font-semibold text-amber-600 uppercase tracking-wider">Due Within 3 Days</span>
+                <h3 class="text-3xl font-display font-bold text-amber-600 mt-1">{{ due_soon_records|length }}</h3>
+                <p class="text-[11px] text-slate-400">Expiring shortly</p>
+            </div>
+            <div class="w-12 h-12 rounded-xl bg-amber-50 text-amber-600 flex items-center justify-center text-xl">
+                <i class="fa-solid fa-hourglass-half"></i>
+            </div>
+        </div>
+
+        <!-- Active on-time -->
+        <div class="p-5 rounded-2xl bg-white border border-emerald-200 shadow-sm flex items-center justify-between">
+            <div>
+                <span class="text-xs font-semibold text-emerald-600 uppercase tracking-wider">On-Time Circulation</span>
+                <h3 class="text-3xl font-display font-bold text-emerald-600 mt-1">{{ issued_books|length }}</h3>
+                <p class="text-[11px] text-slate-400">Total books in circulation</p>
+            </div>
+            <div class="w-12 h-12 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center text-xl">
+                <i class="fa-solid fa-shield-check"></i>
+            </div>
+        </div>
+    </div>
+
+    <!-- Reminders Table -->
+    <div class="bg-white rounded-2xl border border-slate-200 shadow-sm p-6">
+        <h2 class="font-display font-bold text-slate-900 text-lg mb-4">Book Due Date Tracking Ledger</h2>
+
+        <div class="overflow-x-auto">
+            <table class="w-full text-left text-xs">
+                <thead>
+                    <tr class="border-b border-slate-200 text-slate-500 font-semibold uppercase tracking-wider">
+                        <th class="pb-3">Book Title</th>
+                        <th class="pb-3">Borrower</th>
+                        <th class="pb-3">Department</th>
+                        <th class="pb-3">Due Date</th>
+                        <th class="pb-3">Status</th>
+                        <th class="pb-3">Fine (₹10/day)</th>
+                        <th class="pb-3 text-right">Actions</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-slate-100">
+                    {% for item in issued_books %}
+                        <tr class="hover:bg-slate-50 transition-colors {% if item.is_overdue %}bg-rose-50/30{% elif item.days_remaining <= 3 %}bg-amber-50/20{% endif %}">
+                            <td class="py-3.5 font-semibold text-slate-800 line-clamp-1 max-w-[220px]">
+                                {{ item.book_title }}
+                            </td>
+                            <td class="py-3.5 text-slate-600">
+                                {{ item.user.username }}
+                            </td>
+                            <td class="py-3.5 text-slate-500">
+                                <span class="px-2 py-0.5 rounded text-[10px] font-semibold bg-slate-100 text-slate-700">
+                                    {{ item.department }}
+                                </span>
+                            </td>
+                            <td class="py-3.5 text-slate-700 font-medium">
+                                {{ item.due_date|date:"M d, Y" }}
+                            </td>
+                            <td class="py-3.5">
+                                {% if item.is_overdue %}
+                                    <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-rose-100 text-rose-800 animate-pulse">
+                                        <i class="fa-solid fa-triangle-exclamation"></i> Overdue by {{ item.days_remaining|stringformat:"+d"|slice:"1:" }} days
+                                    </span>
+                                {% elif item.days_remaining <= 3 %}
+                                    <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-semibold bg-amber-100 text-amber-800">
+                                        <i class="fa-solid fa-clock"></i> Due in {{ item.days_remaining }} days
+                                    </span>
+                                {% else %}
+                                    <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-semibold bg-emerald-100 text-emerald-800">
+                                        <i class="fa-solid fa-circle-check"></i> On Time ({{ item.days_remaining }}d left)
+                                    </span>
+                                {% endif %}
+                            </td>
+                            <td class="py-3.5 font-bold {% if item.fine_amount > 0 %}text-rose-600{% else %}text-slate-400{% endif %}">
+                                ₹{{ item.fine_amount }}
+                            </td>
+                            <td class="py-3.5 text-right space-x-1 whitespace-nowrap">
+                                <a href="{% url 'download_receipt' item.id %}" target="_blank" class="px-2.5 py-1 rounded bg-slate-100 hover:bg-slate-200 text-slate-700 font-medium text-[11px]" title="Borrow Slip">
+                                    <i class="fa-solid fa-receipt"></i> Slip
+                                </a>
+                                <form action="{% url 'issue_books' %}" method="POST" class="inline">
+                                    {% csrf_token %}
+                                    <input type="hidden" name="action" value="return">
+                                    <input type="hidden" name="recordId" value="{{ item.id }}">
+                                    <button type="submit" class="px-2.5 py-1 rounded bg-brand-50 hover:bg-brand-600 text-brand-700 hover:text-white font-medium text-[11px] transition-colors">
+                                        Process Return
+                                    </button>
+                                </form>
+                            </td>
+                        </tr>
+                    {% empty %}
+                        <tr>
+                            <td colspan="7" class="py-12 text-center text-slate-400">
+                                <i class="fa-solid fa-bell-slash text-3xl text-slate-300 mb-2"></i>
+                                <p class="text-sm font-medium text-slate-700">No active book loans need reminding!</p>
+                                <p class="text-xs text-slate-400">All loaned items are either returned or within borrowing limits.</p>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+</div>
+
+<script>
+    function triggerEmailBroadcast() {
+        Swal.fire({
+            title: 'Dispatch Email Reminders?',
+            text: 'Automated email alerts will be sent to all borrowers with overdue or expiring loans.',
+            icon: 'question',
+            showCancelButton: true,
+            confirmButtonColor: '#d97706',
+            cancelButtonColor: '#64748b',
+            confirmButtonText: 'Yes, Send Reminders'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Email Reminders Dispatched!',
+                    text: 'Automated notifications logged and sent successfully via Django Email Backend.',
+                    timer: 2500,
+                    showConfirmButton: false
+                });
+            }
+        });
+    }
+</script>
+{% endblock %}

@@ -1,0 +1,125 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Borrow Slip #{{ record.id }} | Readora LMS</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        @media print {
+            .no-print { display: none !important; }
+            body { background: white !important; }
+            .slip-card { box-shadow: none !important; border: 1px solid #000 !important; }
+        }
+    </style>
+</head>
+<body class="bg-slate-100 min-h-screen py-10 px-4 flex flex-col items-center justify-center">
+
+    <!-- Action Bar (Hidden during printing) -->
+    <div class="max-w-md w-full mb-4 flex items-center justify-between no-print">
+        <a href="javascript:history.back()" class="text-xs font-semibold text-slate-600 hover:text-slate-900">
+            &larr; Back to System
+        </a>
+        <button onclick="window.print()" class="px-4 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-semibold text-xs shadow-md transition-all flex items-center gap-1.5">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"></path></svg>
+            Print Borrow Slip
+        </button>
+    </div>
+
+    <!-- Official Slip Card -->
+    <div class="slip-card max-w-md w-full bg-white rounded-2xl shadow-xl border border-slate-200 p-8 relative overflow-hidden">
+        
+        <!-- Header Banner -->
+        <div class="text-center pb-6 border-b border-slate-200">
+            <div class="w-12 h-12 rounded-xl bg-indigo-600 text-white flex items-center justify-center text-xl font-bold mx-auto mb-2">
+                R
+            </div>
+            <h1 class="text-xl font-bold text-slate-900 tracking-tight">READORA UNIVERSITY LIBRARY</h1>
+            <p class="text-[11px] text-slate-500 uppercase tracking-widest mt-0.5">Official Circulation Transaction Slip</p>
+            <p class="text-xs text-slate-400 mt-1">Transaction Ref: <code class="text-indigo-600 font-bold">#RD-{{ record.id }}-{{ record.due_date|date:"Ymd" }}</code></p>
+        </div>
+
+        <!-- Borrower Information -->
+        <div class="py-4 border-b border-slate-100 text-xs">
+            <p class="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-2">Borrower Details</p>
+            <div class="grid grid-cols-2 gap-2 text-slate-700">
+                <div>
+                    <span class="text-slate-400 block text-[10px]">Name:</span>
+                    <strong class="text-slate-900">{{ record.user.first_name|default:record.user.username }}</strong>
+                </div>
+                <div>
+                    <span class="text-slate-400 block text-[10px]">Username / ID:</span>
+                    <strong class="text-slate-900">{{ record.user.username }}</strong>
+                </div>
+                <div>
+                    <span class="text-slate-400 block text-[10px]">Department:</span>
+                    <span>{{ record.department }}</span>
+                </div>
+                <div>
+                    <span class="text-slate-400 block text-[10px]">Role:</span>
+                    <span class="capitalize">{{ record.user.registered_profile.role|default:"Student" }}</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Book Information -->
+        <div class="py-4 border-b border-slate-100 text-xs">
+            <p class="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-2">Item Circulation</p>
+            <div class="space-y-1.5 text-slate-700">
+                <div>
+                    <span class="text-slate-400 block text-[10px]">Title:</span>
+                    <strong class="text-slate-900 text-sm leading-snug">{{ record.book_title }}</strong>
+                </div>
+                <div class="grid grid-cols-2 gap-2 pt-1">
+                    <div>
+                        <span class="text-slate-400 block text-[10px]">Discipline:</span>
+                        <span>{{ record.department }}</span>
+                    </div>
+                    <div>
+                        <span class="text-slate-400 block text-[10px]">Rack Location:</span>
+                        <span>{{ record.book.rack_location|default:"General Stacks" }}</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Loan Terms & Deadlines -->
+        <div class="py-4 border-b border-slate-100 text-xs grid grid-cols-2 gap-4">
+            <div class="p-3 rounded-xl bg-slate-50 border border-slate-100">
+                <span class="text-[10px] text-slate-400 block">Date of Issue</span>
+                <strong class="text-slate-900 text-sm">{{ record.issued_date|date:"M d, Y" }}</strong>
+            </div>
+            <div class="p-3 rounded-xl bg-indigo-50 border border-indigo-100">
+                <span class="text-[10px] text-indigo-500 block">Return Due Date</span>
+                <strong class="text-indigo-900 text-sm">{{ record.due_date|date:"M d, Y" }}</strong>
+            </div>
+        </div>
+
+        <!-- Dynamic QR Code & Stamp -->
+        <div class="pt-6 flex items-center justify-between">
+            <div class="text-center">
+                {% if qr_data_url %}
+                    <img src="{{ qr_data_url }}" alt="Circulation QR Code" class="w-24 h-24 border border-slate-200 rounded-lg p-1 bg-white">
+                {% endif %}
+                <p class="text-[9px] text-slate-400 mt-1 uppercase tracking-wider">Scan for Check-in</p>
+            </div>
+
+            <div class="text-right text-[11px] text-slate-500">
+                <div class="border-b border-slate-300 pb-8 mb-1 w-32 inline-block"></div>
+                <p class="font-semibold text-slate-800">Authorized Librarian</p>
+                <p class="text-[10px] text-slate-400">Circulation Desk Seal</p>
+            </div>
+        </div>
+
+        <!-- Policies -->
+        <div class="mt-6 pt-4 border-t border-dashed border-slate-200 text-center text-[10px] text-slate-400 leading-tight">
+            Please return or renew before due date. A late penalty of ₹10.00 per overdue calendar day will accrue automatically.
+        </div>
+
+    </div>
+
+</body>
+</html>

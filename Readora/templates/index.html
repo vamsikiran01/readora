@@ -1,0 +1,220 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Readora | Modern Enterprise Library Management System{% endblock %}
+
+{% block content %}
+<!-- Hero Section -->
+<section class="relative overflow-hidden bg-gradient-to-b from-brand-50 via-white to-slate-50 pt-16 pb-24 border-b border-slate-200/60">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+        <div class="text-center max-w-3xl mx-auto">
+            <span class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full text-xs font-semibold bg-brand-100 text-brand-700 border border-brand-200/80 mb-6 shadow-sm">
+                <span class="w-2 h-2 rounded-full bg-brand-600 animate-pulse"></span>
+                Next-Gen Academic & Digital Library System
+            </span>
+            <h1 class="text-4xl sm:text-5xl lg:text-6xl font-display font-extrabold text-slate-900 tracking-tight leading-[1.15]">
+                Intelligent Circulation, Seamless <span class="text-transparent bg-clip-text bg-gradient-to-r from-brand-600 to-indigo-600">Knowledge Discovery</span>
+            </h1>
+            <p class="mt-6 text-lg text-slate-600 leading-relaxed font-normal">
+                Empowering students, researchers, and librarians with real-time catalog search, ISBN auto-cataloging, QR-code powered book issuance, and automated due date reminders.
+            </p>
+
+            <!-- Quick Search Bar -->
+            <form action="{% url 'search_books' %}" method="GET" class="mt-8 max-w-xl mx-auto flex items-center bg-white rounded-2xl shadow-xl shadow-brand-500/10 border border-slate-200/80 p-2 focus-within:ring-2 focus-within:ring-brand-500 transition-all">
+                <div class="pl-3 text-slate-400">
+                    <i class="fa-solid fa-magnifying-glass text-lg"></i>
+                </div>
+                <input type="text" name="q" placeholder="Search by title, author, topic, or ISBN..." class="w-full px-4 py-2.5 text-sm sm:text-base text-slate-800 placeholder-slate-400 bg-transparent focus:outline-none">
+                <button type="submit" class="px-6 py-2.5 rounded-xl bg-brand-600 hover:bg-brand-700 text-white font-medium text-sm transition-all shadow-sm hover:shadow-md whitespace-nowrap">
+                    Search Catalog
+                </button>
+            </form>
+
+            <!-- Quick Action Pills -->
+            <div class="mt-4 flex flex-wrap items-center justify-center gap-2 text-xs text-slate-500">
+                <span class="font-medium text-slate-700">Popular:</span>
+                <a href="{% url 'search_books' %}?dept=CSE" class="px-2.5 py-1 rounded-full bg-white border border-slate-200 hover:border-brand-400 hover:text-brand-600 transition-colors">Computer Science</a>
+                <a href="{% url 'search_books' %}?dept=CSM" class="px-2.5 py-1 rounded-full bg-white border border-slate-200 hover:border-brand-400 hover:text-brand-600 transition-colors">Artificial Intelligence</a>
+                <a href="{% url 'search_books' %}?dept=CSD" class="px-2.5 py-1 rounded-full bg-white border border-slate-200 hover:border-brand-400 hover:text-brand-600 transition-colors">Data Science</a>
+                <a href="{% url 'search_books' %}?dept=ECE" class="px-2.5 py-1 rounded-full bg-white border border-slate-200 hover:border-brand-400 hover:text-brand-600 transition-colors">Electronics</a>
+            </div>
+        </div>
+
+        <!-- Live Stats Counters -->
+        <div class="mt-16 grid grid-cols-2 md:grid-cols-4 gap-4 max-w-5xl mx-auto">
+            <div class="bg-white/80 backdrop-blur-sm p-6 rounded-2xl border border-slate-200 shadow-sm text-center transform hover:-translate-y-1 transition-all">
+                <div class="w-12 h-12 mx-auto rounded-xl bg-indigo-50 text-indigo-600 flex items-center justify-center text-xl mb-3">
+                    <i class="fa-solid fa-book"></i>
+                </div>
+                <h3 class="text-3xl font-display font-bold text-slate-900">{{ total_books|default:"13" }}</h3>
+                <p class="text-xs font-medium text-slate-500 mt-1 uppercase tracking-wider">Book Titles</p>
+            </div>
+
+            <div class="bg-white/80 backdrop-blur-sm p-6 rounded-2xl border border-slate-200 shadow-sm text-center transform hover:-translate-y-1 transition-all">
+                <div class="w-12 h-12 mx-auto rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center text-xl mb-3">
+                    <i class="fa-solid fa-layer-group"></i>
+                </div>
+                <h3 class="text-3xl font-display font-bold text-slate-900">{{ total_copies|default:"65" }}</h3>
+                <p class="text-xs font-medium text-slate-500 mt-1 uppercase tracking-wider">Physical Copies</p>
+            </div>
+
+            <div class="bg-white/80 backdrop-blur-sm p-6 rounded-2xl border border-slate-200 shadow-sm text-center transform hover:-translate-y-1 transition-all">
+                <div class="w-12 h-12 mx-auto rounded-xl bg-amber-50 text-amber-600 flex items-center justify-center text-xl mb-3">
+                    <i class="fa-solid fa-hand-holding-hand"></i>
+                </div>
+                <h3 class="text-3xl font-display font-bold text-slate-900">{{ active_borrows|default:"0" }}</h3>
+                <p class="text-xs font-medium text-slate-500 mt-1 uppercase tracking-wider">Active Borrows</p>
+            </div>
+
+            <div class="bg-white/80 backdrop-blur-sm p-6 rounded-2xl border border-slate-200 shadow-sm text-center transform hover:-translate-y-1 transition-all">
+                <div class="w-12 h-12 mx-auto rounded-xl bg-purple-50 text-purple-600 flex items-center justify-center text-xl mb-3">
+                    <i class="fa-solid fa-users"></i>
+                </div>
+                <h3 class="text-3xl font-display font-bold text-slate-900">{{ total_members|default:"12" }}</h3>
+                <p class="text-xs font-medium text-slate-500 mt-1 uppercase tracking-wider">Registered Members</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Department Explorer Section -->
+<section class="py-16 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="flex flex-col sm:flex-row sm:items-end justify-between mb-10">
+        <div>
+            <h2 class="text-2xl sm:text-3xl font-display font-bold text-slate-900">Academic Disciplines</h2>
+            <p class="text-sm text-slate-500 mt-1">Browse university departments and curated reference materials</p>
+        </div>
+        <a href="{% url 'search_books' %}" class="mt-3 sm:mt-0 text-sm font-semibold text-brand-600 hover:text-brand-700 flex items-center gap-1 group">
+            View Complete Catalog <i class="fa-solid fa-arrow-right text-xs group-hover:translate-x-1 transition-transform"></i>
+        </a>
+    </div>
+
+    <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
+        {% for code, name in departments %}
+            <a href="{% url 'search_books' %}?dept={{ code }}" class="group p-5 rounded-2xl bg-white border border-slate-200 hover:border-brand-400 hover:shadow-lg hover:shadow-brand-500/5 transition-all duration-200 flex flex-col justify-between">
+                <div class="flex items-center justify-between mb-4">
+                    <div class="w-10 h-10 rounded-xl bg-brand-50 group-hover:bg-brand-600 text-brand-600 group-hover:text-white flex items-center justify-center text-sm font-bold transition-colors">
+                        {{ code }}
+                    </div>
+                    <span class="text-xs font-medium text-slate-400 group-hover:text-brand-600 transition-colors">
+                        <i class="fa-solid fa-chevron-right"></i>
+                    </span>
+                </div>
+                <div>
+                    <h3 class="font-semibold text-slate-900 group-hover:text-brand-600 text-sm transition-colors leading-snug">{{ name }}</h3>
+                    <p class="text-xs text-slate-400 mt-1">Core & elective textbooks</p>
+                </div>
+            </a>
+        {% endfor %}
+    </div>
+</section>
+
+<!-- Featured Books Grid -->
+<section class="py-16 bg-white border-t border-slate-200">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="flex items-center justify-between mb-10">
+            <div>
+                <span class="text-xs font-bold text-brand-600 uppercase tracking-widest">Handpicked Texts</span>
+                <h2 class="text-2xl sm:text-3xl font-display font-bold text-slate-900 mt-1">Featured Academic Textbooks</h2>
+            </div>
+            <a href="{% url 'search_books' %}" class="text-sm font-semibold text-brand-600 hover:text-brand-700 flex items-center gap-1">
+                Explore All <i class="fa-solid fa-arrow-right text-xs"></i>
+            </a>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            {% for book in featured_books %}
+                <div class="group bg-slate-50 rounded-2xl border border-slate-200 overflow-hidden hover:shadow-xl hover:border-brand-300 transition-all duration-300 flex flex-col justify-between">
+                    <div class="p-6">
+                        <div class="flex items-start justify-between gap-3 mb-4">
+                            <span class="px-2.5 py-1 rounded-md text-xs font-semibold bg-brand-100 text-brand-700">
+                                {{ book.department }}
+                            </span>
+                            {% if book.is_available %}
+                                <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-medium bg-emerald-100 text-emerald-800">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-emerald-600"></span> Available ({{ book.available_copies }})
+                                </span>
+                            {% else %}
+                                <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-medium bg-rose-100 text-rose-800">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-rose-600"></span> Checked Out
+                                </span>
+                            {% endif %}
+                        </div>
+
+                        <h3 class="font-display font-bold text-lg text-slate-900 group-hover:text-brand-600 transition-colors line-clamp-1">
+                            {{ book.title }}
+                        </h3>
+                        <p class="text-xs text-slate-500 font-medium mt-1">By {{ book.author }}</p>
+
+                        <p class="text-xs text-slate-600 mt-3 line-clamp-2 leading-relaxed">
+                            {{ book.description|default:"Core curriculum literature with theoretical concepts, practical exercises, and reference notes." }}
+                        </p>
+
+                        <div class="mt-4 pt-4 border-t border-slate-200/80 flex items-center justify-between text-xs text-slate-500">
+                            <span><i class="fa-solid fa-location-dot text-slate-400 mr-1"></i>{{ book.rack_location }}</span>
+                            <span><i class="fa-solid fa-barcode text-slate-400 mr-1"></i>{{ book.isbn|default:"978-013" }}</span>
+                        </div>
+                    </div>
+
+                    <div class="px-6 py-4 bg-white border-t border-slate-200/80 flex items-center justify-between">
+                        {% if book.pdf_filename %}
+                            <a href="{% static 'books/' %}{{ book.pdf_filename }}" target="_blank" class="text-xs font-semibold text-indigo-600 hover:text-indigo-800 flex items-center gap-1.5">
+                                <i class="fa-regular fa-file-pdf text-red-500 text-sm"></i> Read Online PDF
+                            </a>
+                        {% else %}
+                            <span class="text-xs text-slate-400"><i class="fa-solid fa-book-bookmark mr-1"></i>Physical Copy</span>
+                        {% endif %}
+
+                        <a href="{% url 'issue_books' %}" class="px-3 py-1.5 rounded-lg bg-brand-50 hover:bg-brand-600 text-brand-700 hover:text-white font-medium text-xs transition-colors">
+                            Issue Book
+                        </a>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+
+<!-- Enterprise LMS Engineering Highlights (For Recruiters) -->
+<section class="py-16 bg-slate-900 text-white relative overflow-hidden">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+        <div class="max-w-3xl mx-auto text-center mb-12">
+            <span class="text-xs font-semibold text-brand-400 uppercase tracking-widest">Enterprise Architecture</span>
+            <h2 class="text-2xl sm:text-3xl font-display font-bold mt-2">Production-Grade Library Tech Stack</h2>
+            <p class="text-slate-400 text-sm mt-2">Engineered following industry best practices for security, data consistency, and low latency.</p>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div class="p-6 rounded-2xl bg-slate-800/60 border border-slate-700/80 hover:border-brand-500/50 transition-all">
+                <div class="w-10 h-10 rounded-xl bg-brand-500/10 text-brand-400 flex items-center justify-center text-lg mb-4">
+                    <i class="fa-solid fa-shield-halved"></i>
+                </div>
+                <h3 class="font-semibold text-base text-white">Role-Based Access Control (RBAC)</h3>
+                <p class="text-xs text-slate-400 mt-2 leading-relaxed">
+                    Granular permission tiers distinguishing students, faculty members, and library administrators with custom Django middleware.
+                </p>
+            </div>
+
+            <div class="p-6 rounded-2xl bg-slate-800/60 border border-slate-700/80 hover:border-brand-500/50 transition-all">
+                <div class="w-10 h-10 rounded-xl bg-emerald-500/10 text-emerald-400 flex items-center justify-center text-lg mb-4">
+                    <i class="fa-solid fa-qrcode"></i>
+                </div>
+                <h3 class="font-semibold text-base text-white">ISBN & QR Circulation Engine</h3>
+                <p class="text-xs text-slate-400 mt-2 leading-relaxed">
+                    Real-time metadata ingestion from Google Books API and dynamic base64 QR-code generation for printable borrower slips.
+                </p>
+            </div>
+
+            <div class="p-6 rounded-2xl bg-slate-800/60 border border-slate-700/80 hover:border-brand-500/50 transition-all">
+                <div class="w-10 h-10 rounded-xl bg-purple-500/10 text-purple-400 flex items-center justify-center text-lg mb-4">
+                    <i class="fa-solid fa-bolt"></i>
+                </div>
+                <h3 class="font-semibold text-base text-white">Vercel Serverless & WhiteNoise</h3>
+                <p class="text-xs text-slate-400 mt-2 leading-relaxed">
+                    Cloud-native deployment with optimized static asset caching and automated PostgreSQL database connection pooling.
+                </p>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}
