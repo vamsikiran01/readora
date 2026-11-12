@@ -65,8 +65,8 @@
 
 ### 1. Clone the Repository
 ```bash
-git clone https://github.com/vamsikiran01/Readora-LMS.git
-cd Readora-LMS
+git clone https://github.com/vamsikiran01/readora.git
+cd readora
 ```
 
 ### 2. Set Up Virtual Environment & Dependencies
