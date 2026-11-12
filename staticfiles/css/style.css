@@ -1,0 +1,86 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f9f9f9;
+    color: #333;
+}
+
+header {
+    background-color: #1a73e8;
+    color: white;
+    padding: 20px;
+    text-align: center;
+}
+
+form {
+    margin: 20px auto;
+    padding: 20px;
+    background-color: white;
+    width: 300px;
+    border-radius: 8px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    animation: fadeIn 0.5s ease-in-out;
+}
+
+input, select, button {
+    width: 100%;
+    padding: 10px;
+    margin: 10px 0;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+}
+
+button {
+    background-color: #1a73e8;
+    color: white;
+    cursor: pointer;
+    border: none;
+}
+
+button:hover {
+    background-color: #007bb5;
+}
+
+h2 {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+form input[type="text"], form input[type="email"], form input[type="password"] {
+    font-size: 16px;
+}
+
+ul {
+    list-style-type: none;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+.bar {
+    text-align: right;
+    padding: 10px;
+    border-radius: 5px;
+    justify-content: space-between;
+
+}
+.bar li a {
+    color: white;
+    padding-bottom: 5px;
+    list-style: none;
+    justify-content: space-between;
+
+}
+.dash {
+    padding-bottom: 100px;
+}
